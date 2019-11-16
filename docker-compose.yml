@@ -25,13 +25,13 @@ services:
       -  ${SMB_SHARES_PWD}/${SMB_SHARE2}:/mnt/${SMB_SHARE2}
       -  ${SMB_SHARES_PWD}/${SMB_SHARE3}:/mnt/${SMB_SHARE3}:z
     
+    #-s "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
+    #-u "<username;password>[;ID;group;GID]"
+    #-p Set ownership and permissions on the shares
     command: '-s "${SMB_SHARE1};/mnt/${SMB_SHARE1};yes;no;no;${SMB_USER1_NAME}" -u "${SMB_USER1_NAME};${SMB_USER1_PASS}"
               -s "${SMB_SHARE2};/mnt/${SMB_SHARE2};yes;no;no;${SMB_USER2_NAME}" -u "${SMB_USER2_NAME};${SMB_USER2_PASS}" 
               -s "${SMB_SHARE3};/mnt/${SMB_SHARE3};yes;no;yes"
               -p'
-              #-s "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
-              #-u "<username;password>[;ID;group;GID]"
-              #-p Set ownership and permissions on the shares
 
 networks:
   default:
