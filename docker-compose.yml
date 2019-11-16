@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  samba:
+    # https://github.com/dperson/samba
+    image: dperson/samba
+    container_name: VM-Shares
+    env_file: .env
+    
+    networks:
+      - default
+    ports:
+      - "${BIND_ADDRESS}:137:137/udp"
+      - "${BIND_ADDRESS}:138:138/udp"
+      - "${BIND_ADDRESS}:139:139/tcp"
+      - "${BIND_ADDRESS}:445:445/tcp"
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    volumes:
+      -  ${SMB_SHARES_PWD}/${SMB_SHARE1}:/mnt/${SMB_SHARE1}
+      -  ${SMB_SHARES_PWD}/${SMB_SHARE2}:/mnt/${SMB_SHARE2}
+      -  ${SMB_SHARES_PWD}/${SMB_SHARE3}:/mnt/${SMB_SHARE3}:z
+    
+    command: '-s "${SMB_SHARE1};/mnt/${SMB_SHARE1};yes;no;no;${SMB_USER1_NAME}" -u "${SMB_USER1_NAME};${SMB_USER1_PASS}"
+              -s "${SMB_SHARE2};/mnt/${SMB_SHARE2};yes;no;no;${SMB_USER2_NAME}" -u "${SMB_USER2_NAME};${SMB_USER2_PASS}" 
+              -s "${SMB_SHARE3};/mnt/${SMB_SHARE3};yes;no;yes"
+              -p'
+              #-s "<name;/path>[;browse;readonly;guest;users;admins;writelist;comment]"
+              #-u "<username;password>[;ID;group;GID]"
+              #-p Set ownership and permissions on the shares
+
+networks:
+  default:
