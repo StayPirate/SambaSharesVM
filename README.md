@@ -1,24 +1,11 @@
-## Autorun at boot
-Once you cloned this repo under `/opt` run the following commands:
+Rename `.env.example` to `.env`, change it according to your preferences, then start the container with `docker-compose up -d`. It will automatically start at boot since `restart: unless-stopped` is the default.
 
-	$ sudo cp docker-compose@.service /lib/systemd/system
-	$ sudo systemctl daemon-reload
+To make the permission work, add a new group on your host system with the `101` GID, then add yourself ot it, as below.
 
-In order to be able to manage the files in your shared folder, `owner:group` have to match the ones set in the container `smbuser:smbshare`
-respectively `UID 100` and `GUID 101`.
+    $sudo groupadd -g 101 smb
+    $sudo gpasswd -a $USER smb
 
-To do so run:
+Now you can change the owner and permissions of the shared folders on the host system.
 
-	$ sudo groupadd -g 101 smb
-	$ sudo gpasswd -A $USER smb
-
-NB: For the changes to take effect you need to either logout/reboot your system or start a new login shell
-
-	$ sudo systemctl start docker-compose@SambaSharesVM.service
-	$ sudo systemctl enable docker-compose@SambaSharesVM.service
-
-If you get the following error message: 
-docker-compose not found, make sure it's under `/usr/bin/docker-compose`. 
-If not, install it (according to your distro) or create a symbolic link for it
-`ln -s $(which docker-compose) /usr/bin/docker-compose`.
-
+    $sudo chown 100:101 /pathname/to/shared_foleder
+    $sudo chmod -R 775 /pathname/to/shared_foleder
